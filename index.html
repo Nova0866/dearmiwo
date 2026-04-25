@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>✦</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Caveat:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pink:    #f7c5d0;
+      --blue:    #b8d8f0;
+      --green:   #c5e8d0;
+      --lavender:#ddd0f0;
+      --peach:   #fce0c8;
+      --text:    #4a3f52;
+      --muted:   #9a8aa2;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--text);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ── animated dreamy gradient ── */
+    body {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(125deg,
+        #f7c5d0 0%,
+        #ddd0f0 30%,
+        #b8d8f0 60%,
+        #c5e8d0 100%);
+      background-size: 220% 220%;
+      animation: drift 18s ease-in-out infinite;
+    }
+    @keyframes drift {
+      0%,100% { background-position: 0% 50%; }
+      50%     { background-position: 100% 50%; }
+    }
+
+    /* soft floating blobs for depth */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.55;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob.b1 { width: 320px; height: 320px; background: #f7c5d0; top: -80px;  left: -60px; animation: float1 14s ease-in-out infinite; }
+    .blob.b2 { width: 280px; height: 280px; background: #b8d8f0; bottom: -60px; right: -40px; animation: float2 17s ease-in-out infinite; }
+    .blob.b3 { width: 240px; height: 240px; background: #ddd0f0; top: 40%; right: 15%; animation: float3 20s ease-in-out infinite; }
+    @keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,40px)} }
+    @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-40px,-30px)} }
+    @keyframes float3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,-40px)} }
+
+    /* ── card ── */
+    .box {
+      position: relative;
+      z-index: 2;
+      width: min(92vw, 460px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+      padding: 48px 36px 38px;
+      background: rgba(255, 255, 255, 0.32);
+      backdrop-filter: blur(26px) saturate(150%);
+      -webkit-backdrop-filter: blur(26px) saturate(150%);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 32px;
+      box-shadow:
+        0 24px 70px rgba(120, 100, 140, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      animation: cardIn 1.1s cubic-bezier(.2,.8,.2,1) both;
+    }
+    @keyframes cardIn {
+      0%   { opacity: 0; transform: translateY(14px) scale(0.985); }
+      100% { opacity: 1; transform: translateY(0)    scale(1); }
+    }
+
+    /* ── hero ── */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .hero .tag {
+      font-family: 'Caveat', cursive;
+      font-size: 17px;
+      color: var(--muted);
+      letter-spacing: 0.18em;
+      text-transform: lowercase;
+      opacity: 0.85;
+    }
+    .hero .title {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(2rem, 7vw, 2.6rem);
+      line-height: 1.1;
+      color: #7a5080;
+      letter-spacing: 0.005em;
+    }
+    .hero .title .amp {
+      display: inline-block;
+      margin: 0 6px;
+      color: #b07090;
+      font-size: 0.85em;
+      transform: translateY(-2px);
+    }
+    .hero .sub {
+      font-family: 'Caveat', cursive;
+      font-size: 16px;
+      color: var(--muted);
+      margin-top: 4px;
+      letter-spacing: 0.04em;
+    }
+    .hero .divider {
+      margin-top: 10px;
+      width: 64px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(176,112,144,0.5), transparent);
+    }
+
+    .inputs {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      width: 100%;
+    }
+    input {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border: 1px solid rgba(255,255,255,0.55);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.4);
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      font-size: 28px;
+      color: var(--text);
+      outline: none;
+      text-transform: uppercase;
+      transition: background 0.25s ease, border-color 0.25s ease, transform 0.15s ease;
+      caret-color: #b07090;
+    }
+    input:focus {
+      background: rgba(255, 255, 255, 0.65);
+      border-color: rgba(176, 112, 144, 0.55);
+      transform: translateY(-1px);
+    }
+    input.shake {
+      animation: shake 0.45s ease;
+      background: rgba(255, 200, 200, 0.55);
+      border-color: rgba(200, 100, 120, 0.55);
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20% { transform: translateX(-7px); }
+      40% { transform: translateX(7px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 13px 38px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-style: italic;
+      letter-spacing: 0.06em;
+      color: #fff;
+      background: linear-gradient(135deg, #b07090 0%, #8a6db0 100%);
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(140, 100, 160, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+    button:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(140, 100, 160, 0.45); }
+    button:active { transform: translateY(1px); }
+
+    /* ── iframe overlay used to show pages in place ── */
+    #frame {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      z-index: 999;
+      background: transparent;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.8s ease;
+    }
+    #frame.show { opacity: 1; pointer-events: all; }
+
+    /* ── soft loader veil shown while iframe loads ── */
+    #veil {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 22px;
+      background: linear-gradient(125deg,
+        #f7c5d0 0%,
+        #ddd0f0 30%,
+        #b8d8f0 60%,
+        #c5e8d0 100%);
+      background-size: 220% 220%;
+      animation: drift 18s ease-in-out infinite;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.7s ease;
+    }
+    #veil.show { opacity: 1; pointer-events: all; }
+    #veil .veil-mark {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      color: #7a5080;
+      letter-spacing: 0.02em;
+      animation: veilPulse 2.4s ease-in-out infinite;
+    }
+    #veil .veil-sub {
+      font-family: 'Caveat', cursive;
+      font-size: 17px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+    #veil .veil-dots {
+      display: flex; gap: 8px;
+      margin-top: 4px;
+    }
+    #veil .veil-dots span {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: rgba(176, 112, 144, 0.55);
+      animation: veilDot 1.2s ease-in-out infinite;
+    }
+    #veil .veil-dots span:nth-child(2) { animation-delay: 0.18s; }
+    #veil .veil-dots span:nth-child(3) { animation-delay: 0.36s; }
+    @keyframes veilPulse {
+      0%,100% { opacity: 0.7; transform: translateY(0); }
+      50%     { opacity: 1;   transform: translateY(-2px); }
+    }
+    @keyframes veilDot {
+      0%,100% { opacity: 0.3; transform: translateY(0); }
+      50%     { opacity: 1;   transform: translateY(-4px); }
+    }
+
+    @media (max-width: 600px) {
+      .box { width: min(94vw, 420px); padding: 38px 24px 30px; gap: 18px; border-radius: 26px; }
+      .inputs { gap: 8px; }
+      input { font-size: 24px; border-radius: 14px; }
+      button { font-size: 17px; padding: 12px 32px; }
+      .hero .tag { font-size: 15px; letter-spacing: 0.15em; }
+      .hero .title { font-size: 1.8rem; }
+      .hero .sub { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+
+  <main class="box">
+    <div class="hero">
+      <div class="tag">✦ a little something ✦</div>
+      <div class="title">to you, from me</div>
+      <div class="sub">enter the word, my love</div>
+      <div class="divider"></div>
+    </div>
+    <div class="inputs">
+      <input maxlength="1" aria-label="box 1" />
+      <input maxlength="1" aria-label="box 2" />
+      <input maxlength="1" aria-label="box 3" />
+      <input maxlength="1" aria-label="box 4" />
+      <input maxlength="1" aria-label="box 5" />
+    </div>
+    <button id="enter">enter</button>
+  </main>
+
+  <iframe id="frame" title="page"></iframe>
+
+  <div id="veil" aria-hidden="true">
+    <div class="veil-mark">opening something for you</div>
+    <div class="veil-sub">just a moment ✦</div>
+    <div class="veil-dots"><span></span><span></span><span></span></div>
+  </div>
+
+  <script>
+    const inputs = Array.from(document.querySelectorAll('input'));
+    const button = document.getElementById('enter');
+    const frame  = document.getElementById('frame');
+    const veil   = document.getElementById('veil');
+
+    let map = {};
+    fetch('/assets/core/redirect.json')
+      .then(r => r.json())
+      .then(j => { map = j || {}; })
+      .catch(() => { map = {}; });
+
+    inputs.forEach((el, i) => {
+      el.addEventListener('input', () => {
+        el.value = el.value.toUpperCase();
+        if (el.value && i < inputs.length - 1) inputs[i + 1].focus();
+      });
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !el.value && i > 0) inputs[i - 1].focus();
+        if (e.key === 'Enter') tryEnter();
+      });
+    });
+
+    inputs[0].focus();
+
+    function tryEnter() {
+      const code = inputs.map(i => i.value).join('');
+      const target = map[code];
+      if (target) {
+        // show the soft filler immediately so the gap doesn't feel jarring
+        veil.classList.add('show');
+        document.body.style.overflow = 'hidden';
+
+        // clear inputs so the password isn't lingering behind the iframe
+        inputs.forEach(i => { i.value = ''; i.classList.remove('shake'); });
+        if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+
+        // keep the filler on screen for at least this long, even if the
+        // iframe loads instantly — it's pretty, let her see it
+        const MIN_VEIL_MS = 2600;
+        const start = Date.now();
+        let loaded = false;
+
+        const reveal = () => {
+          if (loaded) return;
+          loaded = true;
+          const elapsed = Date.now() - start;
+          const wait = Math.max(0, MIN_VEIL_MS - elapsed);
+          setTimeout(() => {
+            frame.classList.add('show');
+            setTimeout(() => veil.classList.remove('show'), 700);
+          }, wait);
+        };
+        frame.addEventListener('load', reveal, { once: true });
+        // safety fallback if load never fires
+        setTimeout(reveal, 4500);
+
+        frame.src = target;
+      } else {
+        inputs.forEach(i => {
+          i.classList.remove('shake');
+          void i.offsetWidth;
+          i.classList.add('shake');
+        });
+        setTimeout(() => {
+          inputs.forEach(i => { i.value = ''; i.classList.remove('shake'); });
+          inputs[0].focus();
+        }, 500);
+      }
+    }
+
+    button.addEventListener('click', tryEnter);
+  </script>
+</body>
+</html>
