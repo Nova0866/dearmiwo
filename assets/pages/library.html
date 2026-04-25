@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>✦ library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Caveat:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pink:    #f7c5d0;
+      --blue:    #b8d8f0;
+      --green:   #c5e8d0;
+      --lavender:#ddd0f0;
+      --peach:   #fce0c8;
+      --text:    #4a3f52;
+      --muted:   #9a8aa2;
+      --plum:    #7a5080;
+      --rose:    #b07090;
+    }
+
+    html, body {
+      width: 100%; min-height: 100%;
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--text);
+      -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
+    }
+
+    /* ── same animated gradient as index.html ── */
+    body {
+      position: relative;
+      background: linear-gradient(125deg,
+        #f7c5d0 0%,
+        #ddd0f0 30%,
+        #b8d8f0 60%,
+        #c5e8d0 100%);
+      background-size: 220% 220%;
+      animation: drift 18s ease-in-out infinite;
+    }
+    @keyframes drift {
+      0%,100% { background-position: 0% 50%; }
+      50%     { background-position: 100% 50%; }
+    }
+
+    /* blobs */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.5;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob.b1 { width: 320px; height: 320px; background: #f7c5d0; top: -80px;  left: -60px;  animation: float1 14s ease-in-out infinite; }
+    .blob.b2 { width: 280px; height: 280px; background: #b8d8f0; bottom: -60px; right: -40px; animation: float2 17s ease-in-out infinite; }
+    .blob.b3 { width: 240px; height: 240px; background: #ddd0f0; top: 40%; right: 15%;      animation: float3 20s ease-in-out infinite; }
+    @keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,40px)} }
+    @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-40px,-30px)} }
+    @keyframes float3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,-40px)} }
+
+    /* ── page layout ── */
+    .page-wrap {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 56px 24px 80px;
+      gap: 40px;
+    }
+
+    /* ── header ── */
+    .header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      animation: fadeUp 0.9s cubic-bezier(.2,.8,.2,1) both;
+    }
+    .header .tag {
+      font-family: 'Caveat', cursive;
+      font-size: 16px;
+      color: var(--muted);
+      letter-spacing: 0.18em;
+      text-transform: lowercase;
+    }
+    .header .title {
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(2rem, 6vw, 2.8rem);
+      color: var(--plum);
+      line-height: 1.1;
+    }
+    .header .sub {
+      font-family: 'Caveat', cursive;
+      font-size: 15px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .header .divider {
+      margin-top: 10px;
+      width: 64px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(176,112,144,0.5), transparent);
+    }
+
+    /* ── grid ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 18px;
+      width: 100%;
+      max-width: 860px;
+    }
+
+    /* ── card ── */
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 32px 20px 28px;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.32);
+      backdrop-filter: blur(22px) saturate(140%);
+      -webkit-backdrop-filter: blur(22px) saturate(140%);
+      border: 1px solid rgba(255,255,255,0.52);
+      box-shadow:
+        0 16px 48px rgba(120,100,140,0.16),
+        inset 0 1px 0 rgba(255,255,255,0.6);
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+      opacity: 0;
+      transform: translateY(16px);
+      transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease,
+        background 0.22s ease,
+        opacity 0.6s ease;
+      animation: fadeUp 0.7s cubic-bezier(.2,.8,.2,1) both;
+    }
+    .card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow:
+        0 22px 56px rgba(120,100,140,0.22),
+        inset 0 1px 0 rgba(255,255,255,0.65);
+      background: rgba(255,255,255,0.45);
+    }
+    .card:active { transform: translateY(0px); }
+
+    .card-icon {
+      font-size: 28px;
+      line-height: 1;
+      filter: drop-shadow(0 2px 6px rgba(176,112,144,0.25));
+    }
+    .card-name {
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(1.15rem, 2.5vw, 1.35rem);
+      color: var(--plum);
+      line-height: 1.2;
+    }
+    .card-hint {
+      font-family: 'Caveat', cursive;
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* ── empty state ── */
+    .empty {
+      font-family: 'Caveat', cursive;
+      font-size: 18px;
+      color: var(--muted);
+      text-align: center;
+      padding: 60px 20px;
+      opacity: 0.7;
+    }
+
+    /* ── iframe overlay ── */
+    #frame {
+      position: fixed;
+      inset: 0;
+      width: 100%; height: 100%;
+      border: 0;
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.8s ease;
+    }
+    #frame.show { opacity: 1; pointer-events: all; }
+
+    /* ── veil ── */
+    #veil {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 22px;
+      background: linear-gradient(125deg,
+        #f7c5d0 0%, #ddd0f0 30%, #b8d8f0 60%, #c5e8d0 100%);
+      background-size: 220% 220%;
+      animation: drift 18s ease-in-out infinite;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.7s ease;
+    }
+    #veil.show { opacity: 1; pointer-events: all; }
+    #veil .veil-mark {
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(1.5rem, 5vw, 2.1rem);
+      color: var(--plum);
+      animation: veilPulse 2.4s ease-in-out infinite;
+    }
+    #veil .veil-sub {
+      font-family: 'Caveat', cursive;
+      font-size: 17px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+    #veil .veil-dots {
+      display: flex; gap: 8px; margin-top: 4px;
+    }
+    #veil .veil-dots span {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: rgba(176,112,144,0.55);
+      animation: veilDot 1.2s ease-in-out infinite;
+    }
+    #veil .veil-dots span:nth-child(2) { animation-delay: 0.18s; }
+    #veil .veil-dots span:nth-child(3) { animation-delay: 0.36s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes veilPulse {
+      0%,100% { opacity: 0.7; transform: translateY(0); }
+      50%     { opacity: 1;   transform: translateY(-2px); }
+    }
+    @keyframes veilDot {
+      0%,100% { opacity: 0.3; transform: translateY(0); }
+      50%     { opacity: 1;   transform: translateY(-4px); }
+    }
+
+    /* ── mobile ── */
+    @media (max-width: 500px) {
+      .page-wrap { padding: 44px 16px 70px; gap: 32px; }
+      .grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+      .card { padding: 26px 14px 22px; border-radius: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+
+  <div class="page-wrap">
+    <header class="header">
+      <div class="tag">✦ everything made for you ✦</div>
+      <div class="title">your library</div>
+      <div class="sub">tap anything to open it</div>
+      <div class="divider"></div>
+    </header>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <iframe id="frame" title="page"></iframe>
+
+  <div id="veil" aria-hidden="true">
+    <div class="veil-mark">opening something for you</div>
+    <div class="veil-sub">just a moment ✦</div>
+    <div class="veil-dots"><span></span><span></span><span></span></div>
+  </div>
+
+  <script>
+    "use strict";
+
+    var frame = document.getElementById('frame');
+    var veil  = document.getElementById('veil');
+    var grid  = document.getElementById('grid');
+
+    // icons to cycle through per card (purely decorative)
+    var ICONS = ['✦', '♡', '✿', '❀', '˚', '⁎', '✩', '◦'];
+
+    function openPage(path) {
+      veil.classList.add('show');
+
+      var MIN_VEIL_MS = 2200;
+      var start = Date.now();
+      var loaded = false;
+
+      var reveal = function () {
+        if (loaded) return;
+        loaded = true;
+        var wait = Math.max(0, MIN_VEIL_MS - (Date.now() - start));
+        setTimeout(function () {
+          frame.classList.add('show');
+          setTimeout(function () { veil.classList.remove('show'); }, 700);
+        }, wait);
+      };
+
+      frame.addEventListener('load', reveal, { once: true });
+      setTimeout(reveal, 4500); // safety fallback
+      frame.src = path;
+    }
+
+    function buildGrid(map) {
+      grid.innerHTML = '';
+      // only show entries that are arrays with visible=true (index 2)
+      var entries = Object.entries(map).filter(function (e) {
+        return Array.isArray(e[1]) && e[1][2] === true;
+      });
+
+      if (entries.length === 0) {
+        grid.innerHTML = '<div class="empty">nothing here yet ✦</div>';
+        return;
+      }
+
+      entries.forEach(function (entry, idx) {
+        var path = entry[1][0];
+        var name = entry[1][1] || 'untitled';
+        var icon = ICONS[idx % ICONS.length];
+
+        var card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML =
+          '<div class="card-icon">' + icon + '</div>' +
+          '<div class="card-name">' + name + '</div>' +
+          '<div class="card-hint">tap to open</div>';
+
+        card.addEventListener('click', function () { openPage(path); });
+
+        grid.appendChild(card);
+
+        // staggered entrance
+        setTimeout(function () { card.classList.add('visible'); }, 120 + idx * 80);
+      });
+    }
+
+    fetch('/assets/core/redirect.json')
+      .then(function (r) { return r.json(); })
+      .then(function (map) { buildGrid(map); })
+      .catch(function () {
+        grid.innerHTML = '<div class="empty">couldn\'t load pages ✦</div>';
+      });
+  </script>
+</body>
+</html>
