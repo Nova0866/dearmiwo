@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Birthday ✦</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Caveat:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pink:    #f7c5d0;
+      --blue:    #b8d8f0;
+      --green:   #c5e8d0;
+      --lavender:#ddd0f0;
+      --peach:   #fce0c8;
+      --cream:   #fdf6f0;
+      --text:    #4a3f52;
+      --muted:   #9a8aa2;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Cormorant Garamond', serif;
+      background: var(--cream);
+      color: var(--text);
+      overflow: hidden;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+    }
+
+    *:focus { outline: none; }
+
+    /* ── PROGRESS DOTS ── */
+    #dots {
+      position: fixed;
+      bottom: 24px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 8px;
+      z-index: 200;
+    }
+    .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: rgba(150,130,170,0.25);
+      transition: all 0.4s;
+    }
+    .dot.active {
+      background: rgba(150,130,170,0.75);
+      transform: scale(1.35);
+    }
+
+    /* ── HINT ── */
+    #hint {
+      position: fixed;
+      bottom: 50px; left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Caveat', cursive;
+      font-size: 14px;
+      color: var(--muted);
+      z-index: 200;
+      animation: pulse 2.5s ease-in-out infinite;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    #song-pill {
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: 10px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(120, 100, 140, 0.12);
+      color: var(--text);
+      font-family: 'Caveat', cursive;
+      pointer-events: none;
+    }
+    #song-pill .song-title {
+      font-size: 18px;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+    }
+    #song-pill .song-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+    }
+    #song-pill .song-time {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1;
+      white-space: nowrap;
+      min-width: 42px;
+      text-align: center;
+    }
+    #song-pill .song-bar {
+      flex: 1;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(120, 100, 140, 0.12);
+      overflow: hidden;
+    }
+    #song-pill .song-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(176,112,144,0.75), rgba(122,80,128,0.75));
+    }
+    @keyframes pulse { 0%,100%{opacity:0.35} 50%{opacity:0.85} }
+
+    /* ── PAGES ── */
+    .page {
+      position: absolute; inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 70px 40px 100px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.85s ease;
+    }
+    .page.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .bg-0  { background: radial-gradient(ellipse at 60% 40%, #fce8f0 0%, #f0e8fb 45%, #e8f4fb 100%); }
+    .bg-1  { background: radial-gradient(ellipse at 40% 60%, #e8f4fb 0%, #fce8f0 55%, #f5f0fb 100%); }
+    .bg-2  { background: radial-gradient(ellipse at 70% 30%, #eafaf0 0%, #fce8f4 50%, #e8eefb 100%); }
+    .bg-3  { background: radial-gradient(ellipse at 30% 70%, #fbeaf0 0%, #eaf8fb 50%, #f5fbe8 100%); }
+    .bg-4  { background: radial-gradient(ellipse at 50% 50%, #f5e8fb 0%, #fce8ec 40%, #e8f5fb 100%); }
+    .bg-5  { background: radial-gradient(ellipse at 65% 45%, #eaf0fb 0%, #fbeae8 50%, #eafbee 100%); }
+    .bg-6  { background: radial-gradient(ellipse at 35% 55%, #fbeaf5 0%, #eafbf8 50%, #fbf5e8 100%); }
+    .bg-7  { background: radial-gradient(ellipse at 55% 40%, #f0eafb 0%, #fbeae8 50%, #e8fbe8 100%); }
+    .bg-8  { background: radial-gradient(ellipse at 45% 60%, #fce8f0 0%, #eaf4fb 50%, #f5fbe8 100%); }
+    .bg-9  { background: radial-gradient(ellipse at 60% 50%, #f5fbe8 0%, #fce8f0 50%, #eaf0fb 100%); }
+    .bg-10 { background: radial-gradient(ellipse at 40% 40%, #fbeae8 0%, #e8eafb 50%, #fbeaf5 100%); }
+    .bg-11 { background: radial-gradient(ellipse at 50% 60%, #e8fbf5 0%, #fce8f5 50%, #fbf5e8 100%); }
+    .bg-12 { background: radial-gradient(ellipse at 55% 45%, #f0e8fb 0%, #fbeae8 40%, #e8fbf0 100%); }
+
+    /* ── TEXT CARD ── */
+    .card {
+      max-width: 580px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .line {
+      display: block;
+      font-size: clamp(1.1rem, 2.8vw, 1.5rem);
+      font-weight: 300;
+      line-height: 1.9;
+      color: var(--text);
+      letter-spacing: 0.01em;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+    .line.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .line.italic  { font-style: italic; color: #7a6090; }
+    .line.spacer  { height: 12px; opacity: 1; transform: none; }
+    .line.big     { font-size: clamp(1.25rem, 3.2vw, 1.85rem); font-weight: 400; }
+    .line.finale  { font-size: clamp(1.9rem, 5vw, 3rem); font-style: italic; color: #7a5080; font-weight: 300; }
+    .line.closing { font-family: 'Caveat', cursive; font-size: clamp(1.1rem, 2.5vw, 1.5rem); color: var(--muted); }
+
+    /* ── FLICKERING NAME ── */
+    .fname {
+      display: inline-block;
+      position: relative;
+      color: #b07090;
+      font-style: italic;
+      min-width: 2ch;
+    }
+    .fname .na { transition: opacity 0.7s ease; }
+    .fname .nb {
+      position: absolute; left: 0; top: 0;
+      opacity: 0;
+      transition: opacity 0.7s ease;
+      white-space: nowrap;
+    }
+    .fname.flip .na { opacity: 0; }
+    .fname.flip .nb { opacity: 1; }
+
+    /* ── COVER ── */
+    .cover-tag {
+      font-family: 'Caveat', cursive;
+      font-size: 1rem; color: var(--muted);
+      margin-bottom: 14px; letter-spacing: 0.1em;
+    }
+    .cover-title {
+      font-size: clamp(2rem, 6vw, 3.6rem);
+      font-weight: 300; font-style: italic;
+      color: #7a5080; line-height: 1.25;
+    }
+    .cover-sub {
+      font-family: 'Caveat', cursive;
+      font-size: 1.05rem; color: var(--muted);
+      margin-top: 22px;
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+
+    /* ── DOODLES ── */
+    #doodle-canvas {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.3;
+    }
+
+    /* ── FLOATIES ── */
+    .floaty {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      animation: floatUp linear forwards;
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(0) rotate(0deg);   opacity: 0; }
+      10%  { opacity: 0.55; }
+      90%  { opacity: 0.35; }
+      100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+    }
+
+    #audio { display: none; }
+
+    /* ── RETURN BUTTON ── */
+    #return-btn {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: calc(100% + 10px);
+      border: 1px solid rgba(120, 100, 140, 0.18);
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      color: #7a5080;
+      font-family: 'Caveat', cursive;
+      font-size: 18px;
+      letter-spacing: 0.05em;
+      padding: 8px 22px;
+      border-radius: 999px;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+      transition: opacity 0.6s ease, transform 0.2s ease;
+    }
+    #return-btn.show { opacity: 1; pointer-events: all; }
+    #return-btn:hover { transform: translateX(-50%) translateY(-1px); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 600px) {
+      .page { padding: 80px 24px 90px; }
+      .line         { font-size: 1.25rem; line-height: 2; }
+      .line.big     { font-size: 1.45rem; }
+      .line.italic  { font-size: 1.2rem; }
+      .line.finale  { font-size: 2.2rem; }
+      .line.closing { font-size: 1.25rem; }
+      .line.spacer  { height: 8px; }
+      .cover-tag    { font-size: 1.1rem; }
+      .cover-title  { font-size: 2.4rem; }
+      .cover-sub    { font-size: 1.15rem; }
+      #hint         { font-size: 1rem; bottom: 46px; }
+      #song-pill    { left: 8px; right: 8px; bottom: 8px; padding: 10px 12px; }
+      #song-pill .song-title { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<audio id="audio" loop></audio>
+
+<div id="hint">tap anywhere to continue ✦</div>
+<div id="dots"></div>
+<div id="song-pill">
+  <button id="return-btn">return ✦</button>
+  <div class="song-title">The Night We Met</div>
+  <div class="song-meta">
+    <div class="song-time" id="song-current">0:00</div>
+    <div class="song-bar"><div class="song-fill" id="song-fill"></div></div>
+    <div class="song-time" id="song-duration">0:00</div>
+  </div>
+</div>
+<canvas id="doodle-canvas"></canvas>
+<div id="stage"></div>
+
+<script src="../../music.js"></script>
+<script>
+"use strict";
+
+// ── STATE ──────────────────────────────────────────────
+var CONFIG  = {};
+var PAGES   = [];
+var currentPage  = 0;
+var revealedLines = 0;
+
+// ── HELPERS ────────────────────────────────────────────
+var DOODLE_COLORS = ['#f7c5d0','#b8d8f0','#c5e8d0','#ddd0f0','#fce0c8','#f0c8e0','#c8d8f0'];
+var SYMBOLS = ['♡','✦','·','˚','✿','⁎','❀','✩','◦','⋆'];
+
+function rnd(a, b) { return a + Math.random() * (b - a); }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function parseDays(dateStr) {
+  var m = dateStr.match(/^(\d{2}):(\d{2})-(\d{2})-(\d{2})-(\d{4})$/);
+  if (!m) return "?";
+  var then = new Date(+m[5], +m[4]-1, +m[3], +m[1], +m[2]);
+  return Math.max(0, Math.floor((Date.now() - then.getTime()) / 86400000));
+}
+
+function nameHTML(id) {
+  var p = id === 'her' ? CONFIG.names[0] : CONFIG.names[1];
+  return '<span class="fname" data-name="' + id + '">' +
+           '<span class="na">' + p[0] + '</span>' +
+           '<span class="nb">' + p[1] + '</span>' +
+         '</span>';
+}
+
+function processText(raw) {
+  return (raw || '')
+    .replace(/<her>/g,  nameHTML('her'))
+    .replace(/<me>/g,   nameHTML('me'))
+    .replace(/<days>/g, parseDays(CONFIG.date) + ' days')
+    .replace(/<ily>/g,  CONFIG.ily);
+}
+
+// ── BUILD PAGES FROM birthday.json ─────────────────────────
+function buildPages(lines) {
+  var pages = [["__cover__"]];
+  var current = [];
+  lines.forEach(function (item) {
+    var style = item.style || '';
+    var text  = item.text  || '';
+    var encoded = style === 'spacer' ? 's:' :
+                  style === 'italic'  ? 'i:' + text :
+                  style === 'big'     ? 'b:' + text :
+                  style === 'finale'  ? 'f:' + text :
+                  style === 'closing' ? 'c:' + text :
+                  text;
+    current.push(encoded);
+    if (item.type === 'page') {
+      pages.push(current);
+      current = [];
+    }
+  });
+  if (current.length > 0) pages.push(current);
+  return pages;
+}
+
+// ── RENDER ─────────────────────────────────────────────
+function renderPages() {
+  var stage = document.getElementById('stage');
+  stage.innerHTML = '';
+
+  var dotsEl = document.getElementById('dots');
+  dotsEl.innerHTML = '';
+
+  PAGES.forEach(function (lines, pi) {
+    var page = document.createElement('div');
+    page.className = 'page bg-' + (pi % 13);
+    page.id = 'p' + pi;
+    if (pi === 0) page.classList.add('active');
+
+    if (lines[0] === '__cover__') {
+      page.innerHTML =
+        '<div class="card" style="z-index:2">' +
+          '<div class="cover-tag">for you ✦</div>' +
+          '<div class="cover-title">a little something<br>I made for you</div>' +
+          '<div class="cover-sub">tap to begin →</div>' +
+        '</div>';
+    } else {
+      var card = document.createElement('div');
+      card.className = 'card';
+      lines.forEach(function (raw) {
+        var span = document.createElement('span');
+        var isSpacer  = raw === 's:';
+        var isItalic  = !isSpacer && raw.startsWith('i:');
+        var isBig     = !isSpacer && raw.startsWith('b:');
+        var isFinale  = !isSpacer && raw.startsWith('f:');
+        var isClosing = !isSpacer && raw.startsWith('c:');
+        var text = raw.replace(/^[ibsfc]:/, '');
+
+        var cls = 'line';
+        if (isItalic)  cls += ' italic';
+        if (isBig)     cls += ' big';
+        if (isSpacer)  cls += ' spacer';
+        if (isFinale)  cls += ' finale';
+        if (isClosing) cls += ' closing';
+        span.className = cls;
+        if (isSpacer) span.classList.add('visible');
+
+        span.innerHTML = processText(text);
+        card.appendChild(span);
+      });
+      page.appendChild(card);
+    }
+    stage.appendChild(page);
+
+    var dot = document.createElement('div');
+    dot.className = 'dot' + (pi === 0 ? ' active' : '');
+    dotsEl.appendChild(dot);
+  });
+}
+
+// ── NAVIGATION ─────────────────────────────────────────
+function getLines(pi) {
+  return document.querySelectorAll('#p' + pi + ' .line:not(.spacer)');
+}
+
+function revealNext() {
+  var lines = getLines(currentPage);
+  if (revealedLines < lines.length) {
+    lines[revealedLines].classList.add('visible');
+    revealedLines++;
+    updateReturnBtn();
+    return true;
+  }
+  return false;
+}
+
+function updateReturnBtn() {
+  var rb = document.getElementById('return-btn');
+  if (!rb) return;
+  var onLast  = currentPage === PAGES.length - 1;
+  var lines   = getLines(currentPage);
+  var allShown = revealedLines >= lines.length;
+  rb.classList.toggle('show', onLast && allShown);
+}
+
+function goTo(n) {
+  if (n < 0 || n >= PAGES.length) return;
+  document.getElementById('p' + currentPage).classList.remove('active');
+  currentPage = n;
+  revealedLines = 0;
+  document.getElementById('p' + currentPage).classList.add('active');
+  updateDots();
+  burstFloaties();
+  drawDoodles();
+  if (currentPage > 0) {
+    document.getElementById('hint').style.display = 'none';
+    revealNext();
+  }
+  updateReturnBtn();
+}
+
+function handleTap() {
+  if (currentPage === 0) { goTo(1); return; }
+  if (!revealNext()) goTo(currentPage + 1);
+}
+
+document.body.addEventListener('click', function (e) {
+  if (e.target && e.target.closest && e.target.closest('#return-btn')) return;
+  handleTap();
+});
+
+document.getElementById('return-btn').addEventListener('click', function (e) {
+  e.stopPropagation();
+  try { window.top.location.reload(); }
+  catch (err) { window.location.href = '/'; }
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); handleTap(); }
+  if (e.key === 'ArrowLeft' && currentPage > 0) goTo(currentPage - 1);
+});
+
+function updateDots() {
+  document.querySelectorAll('.dot').forEach(function (d, i) {
+    d.classList.toggle('active', i === currentPage);
+  });
+}
+
+// ── NAME FLICKER ───────────────────────────────────────
+var nameFlipped = false;
+function startFlicker() {
+  setInterval(function () {
+    nameFlipped = !nameFlipped;
+    document.querySelectorAll('.fname').forEach(function (el) {
+      el.classList.toggle('flip', nameFlipped);
+    });
+  }, CONFIG.swaptime * 1000);
+}
+
+// ── DOODLE CANVAS ──────────────────────────────────────
+var canvas = document.getElementById('doodle-canvas');
+var ctx = canvas.getContext('2d');
+
+function drawHeart(x, y, size, color) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(size, size);
+  ctx.beginPath(); ctx.moveTo(0, -0.5);
+  ctx.bezierCurveTo(0.5,-1, 1,-0.2, 0, 0.8);
+  ctx.bezierCurveTo(-1,-0.2, -0.5,-1, 0,-0.5);
+  ctx.fillStyle = color; ctx.fill(); ctx.restore();
+}
+function drawStar(x, y, r, color) {
+  ctx.save(); ctx.beginPath();
+  for (var i = 0; i < 5; i++) {
+    var a = (i*4*Math.PI/5) - Math.PI/2, b = a + 2*Math.PI/5;
+    if (i === 0) ctx.moveTo(x+r*Math.cos(a), y+r*Math.sin(a));
+    else         ctx.lineTo(x+r*Math.cos(a), y+r*Math.sin(a));
+    ctx.lineTo(x+r*0.4*Math.cos(b), y+r*0.4*Math.sin(b));
+  }
+  ctx.closePath(); ctx.fillStyle = color; ctx.fill(); ctx.restore();
+}
+function drawCloud(x, y, s, color) {
+  ctx.save(); ctx.fillStyle = color; ctx.beginPath();
+  ctx.arc(x,       y,       s*0.7,   0, Math.PI*2);
+  ctx.arc(x+s*0.8, y,       s*0.55,  0, Math.PI*2);
+  ctx.arc(x+s*0.4, y-s*0.45,s*0.55, 0, Math.PI*2);
+  ctx.fill(); ctx.restore();
+}
+function drawFlower(x, y, r, color) {
+  ctx.save(); ctx.fillStyle = color;
+  for (var i = 0; i < 6; i++) {
+    var a = (i/6)*Math.PI*2;
+    ctx.beginPath();
+    ctx.ellipse(x+Math.cos(a)*r, y+Math.sin(a)*r, r*0.6, r*0.35, a, 0, Math.PI*2);
+    ctx.fill();
+  }
+  ctx.beginPath(); ctx.arc(x,y,r*0.45,0,Math.PI*2);
+  ctx.fillStyle = '#fff8f0'; ctx.fill(); ctx.restore();
+}
+function drawSwirl(x, y, color) {
+  ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.beginPath();
+  for (var t = 0; t < 4*Math.PI; t += 0.1) {
+    var pr = t*3, px = x+pr*Math.cos(t), py = y+pr*Math.sin(t);
+    if (t < 0.05) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.stroke(); ctx.restore();
+}
+function drawDot(x, y, r, color) {
+  ctx.save(); ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+  ctx.fillStyle = color; ctx.fill(); ctx.restore();
+}
+var DTYPES = ['heart','star','cloud','flower','swirl','dot'];
+function drawDoodles() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for (var i = 0, n = 26 + Math.floor(Math.random()*10); i < n; i++) {
+    var x = rnd(0, canvas.width), y = rnd(0, canvas.height), c = pick(DOODLE_COLORS)+'bb', t = pick(DTYPES);
+    if (t==='heart')  drawHeart(x,y,rnd(8,18),c);
+    if (t==='star')   drawStar(x,y,rnd(7,15),c);
+    if (t==='cloud')  drawCloud(x,y,rnd(12,24),c);
+    if (t==='flower') drawFlower(x,y,rnd(8,14),c);
+    if (t==='swirl')  drawSwirl(x,y,c);
+    if (t==='dot')    drawDot(x,y,rnd(2,5),c);
+  }
+}
+window.addEventListener('resize', drawDoodles);
+
+// ── FLOATIES ───────────────────────────────────────────
+function makeFloaty() {
+  var el = document.createElement('div');
+  el.className = 'floaty';
+  el.textContent = pick(SYMBOLS);
+  el.style.left = rnd(5,95) + 'vw';
+  el.style.bottom = '-20px';
+  el.style.fontSize = rnd(10,22) + 'px';
+  el.style.color = pick(DOODLE_COLORS);
+  el.style.animationDuration = rnd(4,9) + 's';
+  el.style.animationDelay   = rnd(0,1.5) + 's';
+  document.body.appendChild(el);
+  el.addEventListener('animationend', function () { el.remove(); });
+}
+function burstFloaties() {
+  for (var i = 0; i < 3; i++) {
+    (function(d){ setTimeout(makeFloaty, d); })(i * 180);
+  }
+}
+
+// ── BOOT ───────────────────────────────────────────────
+Promise.all([
+  fetch('../../config.json').then(function (r) { return r.json(); }),
+  fetch('../content/birthday.json').then(function (r) { return r.json(); })
+]).then(function (results) {
+  CONFIG      = results[0];
+  var content = results[1];
+
+  PAGES = buildPages(content.lines || []);
+  Music.init(content.song || '', '../music/', content.songTitle || '');
+
+  renderPages();
+  startFlicker();
+  drawDoodles();
+  burstFloaties();
+  setInterval(makeFloaty, 5000);
+
+  // start music in sync with the parent's loader fading away
+  setTimeout(function () { Music.play(); }, 2600);
+}).catch(function (err) {
+  console.error('Failed to load config or content:', err);
+});
+</script>
+</body>
+</html>
