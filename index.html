@@ -327,6 +327,14 @@
     }
 
     button.addEventListener('click', tryEnter);
+
+    window.addEventListener('pageshow', function (e) {
+      if (e.persisted) {
+        veil.classList.remove('show');
+        inputs.forEach(i => { i.value = ''; });
+        inputs[0].focus();
+      }
+    });
   </script>
 </body>
 </html>
