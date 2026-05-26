@@ -356,7 +356,7 @@
       });
     }
 
-    fetch('/assets/core/redirect.json')
+    fetch('assets/core/redirect.json')
       .then(function (r) { return r.json(); })
       .then(function (map) { buildGrid(map); })
       .catch(function () {
