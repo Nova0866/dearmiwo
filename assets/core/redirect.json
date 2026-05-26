@@ -1,6 +1,6 @@
 {
-  "4EVER": ["/assets/pages/library.html", "Library", false, ""],
-  "ALTCL": ["/assets/pages/alt.html", "Test Page", false, ""],
-  "M0503": ["/assets/pages/birthday.html", "Birthday Letter", true, "✦"],
-  "USTWO": ["/assets/pages/time.html", "Since we met", true, "♡"]
+  "4EVER": ["assets/pages/library.html", "Library", false, ""],
+  "ALTCL": ["assets/pages/alt.html", "Test Page", false, ""],
+  "M0503": ["assets/pages/birthday.html", "Birthday Letter", true, "✦"],
+  "USTWO": ["assets/pages/time.html", "Since we met", true, "♡"]
 }
