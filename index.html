@@ -285,7 +285,7 @@
     const veil   = document.getElementById('veil');
 
     let map = {};
-    fetch('/assets/core/redirect.json')
+    fetch('assets/core/redirect.json')
       .then(r => r.json())
       .then(j => { map = j || {}; })
       .catch(() => { map = {}; });
