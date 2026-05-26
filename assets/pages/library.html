@@ -190,19 +190,6 @@
       opacity: 0.7;
     }
 
-    /* ── iframe overlay ── */
-    #frame {
-      position: fixed;
-      inset: 0;
-      width: 100%; height: 100%;
-      border: 0;
-      z-index: 999;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.8s ease;
-    }
-    #frame.show { opacity: 1; pointer-events: all; }
-
     /* ── veil ── */
     #veil {
       position: fixed;
@@ -283,7 +270,6 @@
     <div class="grid" id="grid"></div>
   </div>
 
-  <iframe id="frame" title="page"></iframe>
 
   <div id="veil" aria-hidden="true">
     <div class="veil-mark">opening something for you</div>
@@ -294,40 +280,24 @@
   <script>
     "use strict";
 
-    var frame = document.getElementById('frame');
-    var veil  = document.getElementById('veil');
-    var grid  = document.getElementById('grid');
+    var base = location.hostname.includes('github.io') ? '/dearmiwo/' : '/';
+    var veil = document.getElementById('veil');
+    var grid = document.getElementById('grid');
 
-    // icons to cycle through per card (purely decorative)
     var ICONS = ['✦', '♡', '✿', '❀', '˚', '⁎', '✩', '◦'];
 
     function openPage(path) {
+      sessionStorage.setItem('from', 'library');
       veil.classList.add('show');
-
-      var MIN_VEIL_MS = 2200;
-      var start = Date.now();
-      var loaded = false;
-
-      var reveal = function () {
-        if (loaded) return;
-        loaded = true;
-        var wait = Math.max(0, MIN_VEIL_MS - (Date.now() - start));
-        setTimeout(function () {
-          frame.classList.add('show');
-          setTimeout(function () { veil.classList.remove('show'); }, 700);
-        }, wait);
-      };
-
-      frame.addEventListener('load', reveal, { once: true });
-      setTimeout(reveal, 4500); // safety fallback
-      frame.src = path;
+      setTimeout(function () {
+        window.location.href = base + path;
+      }, 2200);
     }
 
     function buildGrid(map) {
       grid.innerHTML = '';
-      // only show entries that are arrays with visible=true (index 2)
       var entries = Object.entries(map).filter(function (e) {
-        return Array.isArray(e[1]) && e[1][2] === true;
+        return !e[0].startsWith('_') && Array.isArray(e[1]) && e[1][2] === true;
       });
 
       if (entries.length === 0) {
@@ -348,20 +318,21 @@
           '<div class="card-hint">tap to open</div>';
 
         card.addEventListener('click', function () { openPage(path); });
-
         grid.appendChild(card);
-
-        // staggered entrance
         setTimeout(function () { card.classList.add('visible'); }, 120 + idx * 80);
       });
     }
 
-    fetch('assets/core/redirect.json')
+    fetch(base + 'assets/core/redirect.json')
       .then(function (r) { return r.json(); })
       .then(function (map) { buildGrid(map); })
       .catch(function () {
         grid.innerHTML = '<div class="empty">couldn\'t load pages ✦</div>';
       });
+
+    window.addEventListener('pageshow', function (e) {
+      if (e.persisted) veil.classList.remove('show');
+    });
   </script>
 </body>
 </html>
