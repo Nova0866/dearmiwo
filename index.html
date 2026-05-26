@@ -29,7 +29,6 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* ── animated dreamy gradient ── */
     body {
       position: relative;
       display: flex;
@@ -48,7 +47,6 @@
       50%     { background-position: 100% 50%; }
     }
 
-    /* soft floating blobs for depth */
     .blob {
       position: fixed;
       border-radius: 50%;
@@ -64,7 +62,6 @@
     @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-40px,-30px)} }
     @keyframes float3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,-40px)} }
 
-    /* ── card ── */
     .box {
       position: relative;
       z-index: 2;
@@ -89,7 +86,6 @@
       100% { opacity: 1; transform: translateY(0)    scale(1); }
     }
 
-    /* ── hero ── */
     .hero {
       display: flex;
       flex-direction: column;
@@ -114,13 +110,6 @@
       line-height: 1.1;
       color: #7a5080;
       letter-spacing: 0.005em;
-    }
-    .hero .title .amp {
-      display: inline-block;
-      margin: 0 6px;
-      color: #b07090;
-      font-size: 0.85em;
-      transform: translateY(-2px);
     }
     .hero .sub {
       font-family: 'Caveat', cursive;
@@ -193,22 +182,7 @@
     button:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(140, 100, 160, 0.45); }
     button:active { transform: translateY(1px); }
 
-    /* ── iframe overlay used to show pages in place ── */
-    #frame {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
-      z-index: 999;
-      background: transparent;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.8s ease;
-    }
-    #frame.show { opacity: 1; pointer-events: all; }
-
-    /* ── soft loader veil shown while iframe loads ── */
+    /* ── veil ── */
     #veil {
       position: fixed;
       inset: 0;
@@ -299,8 +273,6 @@
     <button id="enter">enter</button>
   </main>
 
-  <iframe id="frame" title="page"></iframe>
-
   <div id="veil" aria-hidden="true">
     <div class="veil-mark">opening something for you</div>
     <div class="veil-sub">just a moment ✦</div>
@@ -310,7 +282,6 @@
   <script>
     const inputs = Array.from(document.querySelectorAll('input'));
     const button = document.getElementById('enter');
-    const frame  = document.getElementById('frame');
     const veil   = document.getElementById('veil');
 
     let map = {};
@@ -336,35 +307,12 @@
       const code = inputs.map(i => i.value).join('');
       const target = map[code];
       if (target) {
-        // show the soft filler immediately so the gap doesn't feel jarring
         veil.classList.add('show');
-        document.body.style.overflow = 'hidden';
-
-        // clear inputs so the password isn't lingering behind the iframe
         inputs.forEach(i => { i.value = ''; i.classList.remove('shake'); });
         if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-
-        // keep the filler on screen for at least this long, even if the
-        // iframe loads instantly — it's pretty, let her see it
-        const MIN_VEIL_MS = 2600;
-        const start = Date.now();
-        let loaded = false;
-
-        const reveal = () => {
-          if (loaded) return;
-          loaded = true;
-          const elapsed = Date.now() - start;
-          const wait = Math.max(0, MIN_VEIL_MS - elapsed);
-          setTimeout(() => {
-            frame.classList.add('show');
-            setTimeout(() => veil.classList.remove('show'), 700);
-          }, wait);
-        };
-        frame.addEventListener('load', reveal, { once: true });
-        // safety fallback if load never fires
-        setTimeout(reveal, 4500);
-
-        frame.src = target;
+        setTimeout(() => {
+          window.location.href = target[0];
+        }, 2200);
       } else {
         inputs.forEach(i => {
           i.classList.remove('shake');
