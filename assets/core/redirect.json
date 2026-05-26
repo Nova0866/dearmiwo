@@ -1,5 +1,5 @@
 {
-  "4EVER": ["/library.html", "Library", false],
+  "4EVER": ["/assets/pages/library.html", "Library", false],
   "ALTCL": ["/assets/pages/alt.html", "Test Page", false],
   "M0503": ["/assets/pages/birthday.html", "Birthday Letter", true]
 }
