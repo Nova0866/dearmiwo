@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Since we met ✦</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Caveat:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0b0e1a;
+      --card-bg: rgba(255,255,255,0.04);
+      --border:  rgba(255,255,255,0.07);
+      --glow-p:  #c8a8e0;
+      --glow-b:  #8ab8f0;
+      --glow-g:  #a8e0c8;
+      --glow-gold: #e0c478;
+      --glow-rose: #f0a8b4;
+      --text:    #e8e0f0;
+      --muted:   #8a84a0;
+    }
+
+    html, body {
+      min-height: 100%;
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--text);
+      background: var(--navy);
+      -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
+    }
+
+    /* ── scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; background: transparent; }
+    ::-webkit-scrollbar-track { background: transparent; border: none; }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--glow-p), var(--glow-b));
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #d8b8f0, #9ac8ff);
+    }
+    ::-webkit-scrollbar-corner { background: transparent; }
+
+    /* ── starfield ── */
+    #starfield {
+      position: fixed; inset: 0;
+      z-index: 0; pointer-events: none; overflow: hidden;
+    }
+    .star {
+      position: absolute; border-radius: 50%; background: #fff;
+      animation: twinkle linear infinite;
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: 0.12; transform: scale(1); }
+      50%      { opacity: 1;   transform: scale(1.5); }
+    }
+
+    /* nebula blobs */
+    .nebula {
+      position: fixed; border-radius: 50%;
+      filter: blur(90px); opacity: 0.12;
+      pointer-events: none; z-index: 0;
+    }
+    .nb1 { width: 500px; height: 500px; background: #6030c0; top: -120px; left: -100px; animation: ndrift 22s ease-in-out infinite; }
+    .nb2 { width: 400px; height: 400px; background: #205090; bottom: -80px; right: -80px; animation: ndrift 28s ease-in-out infinite reverse; }
+    .nb3 { width: 300px; height: 300px; background: #402080; top: 40%; left: 55%; animation: ndrift 18s ease-in-out infinite 4s; }
+    @keyframes ndrift {
+      0%,100% { transform: translate(0,0) scale(1); }
+      50%      { transform: translate(30px,40px) scale(1.08); }
+    }
+
+    /* ── layout ── */
+    .page-wrap {
+      position: relative; z-index: 2;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 90px;
+      gap: 48px;
+    }
+
+    /* ── header ── */
+    .header {
+      text-align: center;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      animation: fadeUp 1s ease both;
+    }
+    .header .tag { font-family: 'Caveat', cursive; font-size: 15px; color: var(--muted); letter-spacing: 0.2em; }
+    .header .title { font-style: italic; font-weight: 300; font-size: clamp(2rem, 6vw, 3rem); color: var(--text); line-height: 1.1; }
+    .header .since { font-family: 'Caveat', cursive; font-size: 16px; color: var(--muted); letter-spacing: 0.06em; }
+    .header .divider { margin-top: 8px; width: 80px; height: 1px; background: linear-gradient(90deg, transparent, rgba(200,168,224,0.45), transparent); }
+
+    /* ── hero counter ── */
+    .hero-counter {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      animation: fadeUp 1s ease 0.15s both;
+    }
+    .hero-counter .big-num {
+      font-size: clamp(3.2rem, 11vw, 6.5rem);
+      font-weight: 300; font-style: italic; line-height: 1;
+      background: linear-gradient(135deg, var(--glow-p), var(--glow-b));
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 24px rgba(200,168,224,0.4));
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+    .hero-counter .big-label { font-family: 'Caveat', cursive; font-size: 18px; color: var(--muted); letter-spacing: 0.12em; }
+
+    /* ── section ── */
+    .section {
+      width: 100%; max-width: 880px;
+      display: flex; flex-direction: column; gap: 12px;
+      animation: fadeUp 1s ease both;
+    }
+    .section-label {
+      font-family: 'Caveat', cursive;
+      font-size: 13px; color: var(--muted);
+      letter-spacing: 0.22em; text-transform: uppercase;
+      border-left: 2px solid rgba(200,168,224,0.3);
+      padding-left: 10px;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(178px, 1fr));
+      gap: 12px;
+    }
+
+    /* ── metric card ── */
+    .mcard {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px 18px 18px;
+      display: flex; flex-direction: column; gap: 5px;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      position: relative; overflow: hidden;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .mcard::before {
+      content: ''; position: absolute; inset: 0; border-radius: 20px;
+      opacity: 0; transition: opacity 0.4s;
+      background: radial-gradient(circle at 50% 0%, rgba(200,168,224,0.09), transparent 70%);
+    }
+    .mcard:hover { border-color: rgba(200,168,224,0.2); background: rgba(255,255,255,0.07); }
+    .mcard:hover::before { opacity: 1; }
+
+    .mcard .icon { font-size: 20px; line-height: 1; margin-bottom: 2px; }
+    .mcard .num {
+      font-size: clamp(1.4rem, 3.8vw, 1.9rem);
+      font-weight: 300; font-style: italic; line-height: 1;
+      color: var(--text); font-variant-numeric: tabular-nums;
+    }
+    .mcard .unit { font-family: 'Caveat', cursive; font-size: 14px; color: var(--muted); letter-spacing: 0.04em; }
+    .mcard .sub  { font-family: 'Caveat', cursive; font-size: 11.5px; color: rgba(138,132,160,0.6); margin-top: 3px; line-height: 1.4; }
+
+    /* colour variants */
+    .mcard.purple { border-color: rgba(200,168,224,0.1); }
+    .mcard.purple .num { color: var(--glow-p); text-shadow: 0 0 16px rgba(200,168,224,0.35); }
+    .mcard.blue   { border-color: rgba(138,184,240,0.1); }
+    .mcard.blue   .num { color: var(--glow-b); text-shadow: 0 0 16px rgba(138,184,240,0.35); }
+    .mcard.green  { border-color: rgba(168,224,200,0.1); }
+    .mcard.green  .num { color: var(--glow-g); text-shadow: 0 0 16px rgba(168,224,200,0.35); }
+    .mcard.gold   { border-color: rgba(224,196,120,0.1); }
+    .mcard.gold   .num { color: var(--glow-gold); text-shadow: 0 0 16px rgba(224,196,120,0.35); }
+    .mcard.rose   { border-color: rgba(240,168,180,0.1); }
+    .mcard.rose   .num { color: var(--glow-rose); text-shadow: 0 0 16px rgba(240,168,180,0.35); }
+
+    /* ── footer ── */
+    .footer-note {
+      font-family: 'Caveat', cursive; font-size: 15px;
+      color: var(--muted); text-align: center; opacity: 0.55;
+      animation: fadeUp 1s ease 0.6s both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 500px) {
+      .page-wrap { padding: 46px 13px 80px; gap: 36px; }
+      .cards { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .mcard { padding: 18px 13px 14px; border-radius: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="starfield"></div>
+<div class="nebula nb1"></div>
+<div class="nebula nb2"></div>
+<div class="nebula nb3"></div>
+
+<div class="page-wrap">
+
+  <header class="header">
+    <div class="tag">✦ us, measured in everything ✦</div>
+    <div class="title">time we've shared</div>
+    <div class="since" id="since-label">since the very beginning</div>
+    <div class="divider"></div>
+  </header>
+
+  <div class="hero-counter">
+    <div class="big-num" id="hero-seconds">0</div>
+    <div class="big-label">seconds together</div>
+  </div>
+
+  <!-- time -->
+  <div class="section" style="animation-delay:0.1s">
+    <div class="section-label">time</div>
+    <div class="cards">
+      <div class="mcard purple">
+        <div class="icon">⏱</div>
+        <div class="num" id="m-minutes">—</div>
+        <div class="unit">minutes</div>
+        <div class="sub">every one of them, yours</div>
+      </div>
+      <div class="mcard blue">
+        <div class="icon">🕐</div>
+        <div class="num" id="m-hours">—</div>
+        <div class="unit">hours</div>
+        <div class="sub">of existing alongside you</div>
+      </div>
+      <div class="mcard green">
+        <div class="icon">📅</div>
+        <div class="num" id="m-days">—</div>
+        <div class="unit">days</div>
+        <div class="sub">each one changed a little by you</div>
+      </div>
+      <div class="mcard gold">
+        <div class="icon">🗓</div>
+        <div class="num" id="m-weeks">—</div>
+        <div class="unit">weeks</div>
+        <div class="sub">of slow-building something real</div>
+      </div>
+      <div class="mcard rose">
+        <div class="icon">🌙</div>
+        <div class="num" id="m-months">—</div>
+        <div class="unit">months</div>
+        <div class="sub">each one a little more you</div>
+      </div>
+      <div class="mcard purple">
+        <div class="icon">🪐</div>
+        <div class="num" id="m-years">—</div>
+        <div class="unit">years</div>
+        <div class="sub">and counting, always</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- body -->
+  <div class="section" style="animation-delay:0.2s">
+    <div class="section-label">in your body</div>
+    <div class="cards">
+      <div class="mcard rose">
+        <div class="icon">🫀</div>
+        <div class="num" id="m-heartbeats">—</div>
+        <div class="unit">heartbeats</div>
+        <div class="sub">avg 72 bpm — all of them beating</div>
+      </div>
+      <div class="mcard blue">
+        <div class="icon">🌬</div>
+        <div class="num" id="m-breaths">—</div>
+        <div class="unit">breaths</div>
+        <div class="sub">avg 16 per minute, quiet and alive</div>
+      </div>
+      <div class="mcard purple">
+        <div class="icon">👁</div>
+        <div class="num" id="m-blinks">—</div>
+        <div class="unit">blinks</div>
+        <div class="sub">~15 per min — the world kept going</div>
+      </div>
+      <div class="mcard green">
+        <div class="icon">🧠</div>
+        <div class="num" id="m-thoughts">—</div>
+        <div class="unit">thoughts</div>
+        <div class="sub">~6,200 a day — some must be me</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- sky -->
+  <div class="section" style="animation-delay:0.3s">
+    <div class="section-label">in the sky</div>
+    <div class="cards">
+      <div class="mcard gold">
+        <div class="icon">🌕</div>
+        <div class="num" id="m-moons">—</div>
+        <div class="unit">full moons</div>
+        <div class="sub">one every 29.5 days</div>
+      </div>
+      <div class="mcard rose">
+        <div class="icon">🌅</div>
+        <div class="num" id="m-sunrises">—</div>
+        <div class="unit">sunrises</div>
+        <div class="sub">every one still happened</div>
+      </div>
+      <div class="mcard blue">
+        <div class="icon">🍂</div>
+        <div class="num" id="m-seasons">—</div>
+        <div class="unit">seasons</div>
+        <div class="sub">the world kept turning</div>
+      </div>
+      <div class="mcard purple">
+        <div class="icon">✦</div>
+        <div class="num" id="m-starturns">—</div>
+        <div class="unit">sidereal days</div>
+        <div class="sub">earth's full spin relative to stars</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- small & weird -->
+  <div class="section" style="animation-delay:0.4s">
+    <div class="section-label">the small and strange ones</div>
+    <div class="cards">
+      <div class="mcard gold">
+        <div class="icon">☕</div>
+        <div class="num" id="m-coffees">—</div>
+        <div class="unit">coffees (maybe)</div>
+        <div class="sub">if you had ~2 a day</div>
+      </div>
+      <div class="mcard purple">
+        <div class="icon">🎵</div>
+        <div class="num" id="m-songs">—</div>
+        <div class="unit">songs</div>
+        <div class="sub">avg 3 min 30 sec each</div>
+      </div>
+      <div class="mcard blue">
+        <div class="icon">😴</div>
+        <div class="num" id="m-sleeps">—</div>
+        <div class="unit">sleeps</div>
+        <div class="sub">nights you closed your eyes</div>
+      </div>
+      <div class="mcard green">
+        <div class="icon">🍽</div>
+        <div class="num" id="m-meals">—</div>
+        <div class="unit">meals</div>
+        <div class="sub">~3 a day, none shared (yet)</div>
+      </div>
+      <div class="mcard rose">
+        <div class="icon">📖</div>
+        <div class="num" id="m-pages">—</div>
+        <div class="unit">book pages</div>
+        <div class="sub">if reading 20 pages a day</div>
+      </div>
+      <div class="mcard gold">
+        <div class="icon">🌧</div>
+        <div class="num" id="m-raindrops">—</div>
+        <div class="unit">raindrops (est.)</div>
+        <div class="sub">~5 rainy days/month, 1M drops/m²</div>
+      </div>
+      <div class="mcard purple">
+        <div class="icon">🕯</div>
+        <div class="num" id="m-candles">—</div>
+        <div class="unit">candle hours</div>
+        <div class="sub">if one burned every night</div>
+      </div>
+      <div class="mcard blue">
+        <div class="icon">🌸</div>
+        <div class="num" id="m-flowers">—</div>
+        <div class="unit">flowers bloomed</div>
+        <div class="sub">~391K species, rough global daily est.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">every number keeps going, just like this ✦</div>
+
+</div>
+
+<script>
+"use strict";
+
+var START = null;
+
+function parseDateStr(str) {
+  var m = (str || '').match(/^(\d{2}):(\d{2})-(\d{2})-(\d{2})-(\d{4})$/);
+  if (!m) return null;
+  return new Date(+m[5], +m[4]-1, +m[3], +m[1], +m[2], 0, 0);
+}
+
+function elapsedSeconds() {
+  if (!START) return 0;
+  return Math.max(0, (Date.now() - START.getTime()) / 1000);
+}
+
+// integers, comma-separated
+function fmt(n) {
+  return Math.floor(n).toLocaleString('en-IN');
+}
+// decimals, 2 places
+function fmtDec(n) {
+  return n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function update() {
+  var s      = elapsedSeconds();
+  var min    = s / 60;
+  var hr     = s / 3600;
+  var days   = s / 86400;
+  var weeks  = days / 7;
+  var months = days / 30.4375;
+  var years  = days / 365.25;
+
+  document.getElementById('hero-seconds').textContent = fmt(s);
+
+  // time — decimal for days, weeks, months, years
+  document.getElementById('m-minutes').textContent  = fmt(min);
+  document.getElementById('m-hours').textContent    = fmt(hr);
+  document.getElementById('m-days').textContent     = fmtDec(days);
+  document.getElementById('m-weeks').textContent    = fmtDec(weeks);
+  document.getElementById('m-months').textContent   = fmtDec(months);
+  document.getElementById('m-years').textContent    = fmtDec(years);
+
+  // body
+  document.getElementById('m-heartbeats').textContent = fmt(s * 72 / 60);
+  document.getElementById('m-breaths').textContent    = fmt(s * 16 / 60);
+  document.getElementById('m-blinks').textContent     = fmt(s * 15 / 60);
+  document.getElementById('m-thoughts').textContent   = fmt(days * 6200);
+
+  // sky
+  document.getElementById('m-moons').textContent     = fmt(days / 29.53);
+  document.getElementById('m-sunrises').textContent  = fmt(days);
+  document.getElementById('m-seasons').textContent   = fmt(days / 91.25);
+  document.getElementById('m-starturns').textContent = fmt(days * 366.25 / 365.25);
+
+  // small & weird
+  document.getElementById('m-coffees').textContent   = fmt(days * 2);
+  document.getElementById('m-songs').textContent     = fmt(s / 210);
+  document.getElementById('m-sleeps').textContent    = fmt(days);
+  document.getElementById('m-meals').textContent     = fmt(days * 3);
+  document.getElementById('m-pages').textContent     = fmt(days * 20);
+  document.getElementById('m-raindrops').textContent = fmt(days * (5 / 30) * 1000000);
+  document.getElementById('m-candles').textContent   = fmt(days * 4);
+  document.getElementById('m-flowers').textContent   = fmt(days * 8500);
+}
+
+function buildStars() {
+  var sf = document.getElementById('starfield');
+  var count = Math.min(220, Math.max(60, Math.floor((window.innerWidth * window.innerHeight) / 3000)));
+  for (var i = 0; i < count; i++) {
+    var star = document.createElement('div');
+    star.className = 'star';
+    var size = Math.random() < 0.12 ? (1.6 + Math.random() * 0.8) : (0.5 + Math.random() * 0.9);
+    star.style.cssText =
+      'width:'+ size +'px;height:'+ size +'px;' +
+      'top:'+ (Math.random()*100) +'%;left:'+ (Math.random()*100) +'%;' +
+      'animation-duration:'+ (2 + Math.random()*5) +'s;' +
+      'animation-delay:'+ (Math.random()*7) +'s;' +
+      'opacity:'+ (0.08 + Math.random()*0.35) +';';
+    sf.appendChild(star);
+  }
+}
+
+fetch('../../config.json')
+  .then(function(r) { return r.json(); })
+  .then(function(cfg) {
+    START = parseDateStr(cfg.date || '');
+    if (START) {
+      var opts = { year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('since-label').textContent =
+        'since ' + START.toLocaleDateString('en-IN', opts);
+    }
+    update();
+    setInterval(update, 1000);
+  })
+  .catch(function() {
+    START = new Date();
+    update();
+    setInterval(update, 1000);
+  });
+
+buildStars();
+</script>
+</body>
+</html>
