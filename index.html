@@ -283,9 +283,10 @@
     const inputs = Array.from(document.querySelectorAll('input'));
     const button = document.getElementById('enter');
     const veil   = document.getElementById('veil');
+    const base   = location.hostname.includes('github.io') ? '/dearmiwo/' : '/';
 
     let map = {};
-    fetch('assets/core/redirect.json')
+    fetch(base + 'assets/core/redirect.json')
       .then(r => r.json())
       .then(j => { map = j || {}; })
       .catch(() => { map = {}; });
@@ -311,7 +312,7 @@
         inputs.forEach(i => { i.value = ''; i.classList.remove('shake'); });
         if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
         setTimeout(() => {
-          window.location.href = target[0];
+          window.location.href = base + target[0];
         }, 2200);
       } else {
         inputs.forEach(i => {
