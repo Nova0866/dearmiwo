@@ -351,7 +351,18 @@
 <canvas id="doodle-canvas"></canvas>
 <div id="stage"></div>
 
-<script src="/music.js"></script>
+<script>
+// base-aware path helper
+var base = location.hostname.includes('github.io') ? '/dearmiwo/' : '/';
+</script>
+<script>
+// dynamically load music.js from the right base
+(function () {
+  var s = document.createElement('script');
+  s.src = base + 'music.js';
+  document.head.appendChild(s);
+})();
+</script>
 <script>
 "use strict";
 
@@ -483,8 +494,8 @@ function revealNext() {
 function updateReturnBtn() {
   var rb = document.getElementById('return-btn');
   if (!rb) return;
-  var onLast  = currentPage === PAGES.length - 1;
-  var lines   = getLines(currentPage);
+  var onLast   = currentPage === PAGES.length - 1;
+  var lines    = getLines(currentPage);
   var allShown = revealedLines >= lines.length;
   rb.classList.toggle('show', onLast && allShown);
 }
@@ -520,9 +531,9 @@ document.getElementById('return-btn').addEventListener('click', function (e) {
   var from = sessionStorage.getItem('from');
   sessionStorage.removeItem('from');
   if (from === 'library') {
-    window.location.href = 'library.html';
+    window.location.href = base + 'assets/pages/library.html';
   } else {
-    window.location.href = '/';
+    window.location.href = base;
   }
 });
 
@@ -633,26 +644,34 @@ function burstFloaties() {
   }
 }
 
-Promise.all([
-  fetch('/config.json').then(function (r) { return r.json(); }),
-  fetch('/assets/content/birthday.json').then(function (r) { return r.json(); })
-]).then(function (results) {
-  CONFIG      = results[0];
-  var content = results[1];
+function boot() {
+  Promise.all([
+    fetch(base + 'config.json').then(function (r) { return r.json(); }),
+    fetch(base + 'assets/content/birthday.json').then(function (r) { return r.json(); })
+  ]).then(function (results) {
+    CONFIG      = results[0];
+    var content = results[1];
 
-  PAGES = buildPages(content.lines || []);
-  Music.init(content.song || '', '/assets/music/', content.songTitle || '');
+    PAGES = buildPages(content.lines || []);
+    Music.init(content.song || '', base + 'assets/music/', content.songTitle || '');
 
-  renderPages();
-  startFlicker();
-  drawDoodles();
-  burstFloaties();
-  setInterval(makeFloaty, 5000);
+    renderPages();
+    startFlicker();
+    drawDoodles();
+    burstFloaties();
+    setInterval(makeFloaty, 5000);
 
-  setTimeout(function () { Music.play(); }, 2600);
-}).catch(function (err) {
-  console.error('Failed to load config or content:', err);
-});
+    setTimeout(function () { Music.play(); }, 2600);
+  }).catch(function (err) {
+    console.error('Failed to load config or content:', err);
+  });
+}
+
+// wait for music.js to load before booting
+(function waitForMusic() {
+  if (typeof Music !== 'undefined') { boot(); }
+  else { setTimeout(waitForMusic, 50); }
+})();
 </script>
 </body>
 </html>
