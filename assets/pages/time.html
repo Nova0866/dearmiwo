@@ -154,8 +154,8 @@
       font-weight: 300; font-style: italic; line-height: 1;
       color: var(--text); font-variant-numeric: tabular-nums;
     }
-    .mcard .unit { font-family: 'Caveat', cursive; font-size: 14px; color: var(--muted); letter-spacing: 0.04em; }
-    .mcard .sub  { font-family: 'Caveat', cursive; font-size: 11.5px; color: rgba(138,132,160,0.6); margin-top: 3px; line-height: 1.4; }
+    .mcard .unit { font-family: 'Caveat', cursive; font-size: 16px; color: var(--muted); letter-spacing: 0.04em; }
+    .mcard .sub  { font-family: 'Caveat', cursive; font-size: 13px; color: rgba(138,132,160,0.6); margin-top: 3px; line-height: 1.4; }
 
     /* colour variants */
     .mcard.purple { border-color: rgba(200,168,224,0.1); }
@@ -171,10 +171,34 @@
 
     /* ── footer ── */
     .footer-note {
-      font-family: 'Caveat', cursive; font-size: 15px;
+      font-family: 'Caveat', cursive; font-size: 17px;
       color: var(--muted); text-align: center; opacity: 0.55;
       animation: fadeUp 1s ease 0.6s both;
     }
+
+    /* ── return button ── */
+    .return-btn {
+      font-family: 'Caveat', cursive;
+      font-size: 17px;
+      color: var(--muted);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(200,168,224,0.25);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: 8px 26px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+      animation: fadeUp 1s ease 0.7s both;
+      letter-spacing: 0.05em;
+    }
+    .return-btn:hover {
+      background: rgba(255,255,255,0.1);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+    }
+    .return-btn:active { transform: translateY(0); }
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(14px); }
@@ -370,6 +394,7 @@
   </div>
 
   <div class="footer-note">every number keeps going, just like this ✦</div>
+  <button class="return-btn" id="return-btn">return ✦</button>
 
 </div>
 
@@ -457,7 +482,19 @@ function buildStars() {
   }
 }
 
-fetch('../../config.json')
+var base = location.hostname.includes('github.io') ? '/dearmiwo/' : '/';
+
+document.getElementById('return-btn').addEventListener('click', function () {
+  var from = sessionStorage.getItem('from');
+  sessionStorage.removeItem('from');
+  if (from === 'library') {
+    window.location.href = base + 'assets/pages/library.html';
+  } else {
+    window.location.href = base;
+  }
+});
+
+fetch(base + 'config.json')
   .then(function(r) { return r.json(); })
   .then(function(cfg) {
     START = parseDateStr(cfg.date || '');
